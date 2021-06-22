@@ -194,6 +194,10 @@ random seeds.
 
 ## Results
 
-ToDo
+We argue in our work that Bayesian neural networks perform poorly on out-of-distribution data when there are linear dependencies between features in the train data. Hence, we expect weights corresponding to these dependencies will only influence test but not train predictions. We show in our paper additionally that Bayesian posterior weights along low-variance principal components of the data are sampled from the prior, whereas they are set to zero by standard training procedures that are more robust to covariate shift. Inspired by these conclusions, we propose a novel prior, that we call \textit{EmpCov} prior, on the weights of the first layer of the network to improve the robustness of Bayesian neural networks to covariate shift. 
 
 ![combined_resolution png-1](https://user-images.githubusercontent.com/14368801/122981650-fd517b80-d367-11eb-9876-52a26cbd0200.png)
+
+
+
+
