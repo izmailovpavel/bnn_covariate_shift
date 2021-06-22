@@ -66,9 +66,9 @@ instructions on how to install JAX on your hardware.
 ## File Structure
 
 The implementations of HMC and other methods forked from the [BNN HMC repo](https://github.com/google-research/google-research/tree/master/bnn_hmc)
-are in the [bnn_hmc folder](https://github.com/izmailovpavel/bnn_covariate_shift/tree/main/bnn_hmc). 
-The main training scripts are [run_hmc.py](https://github.com/izmailovpavel/bnn_covariate_shift/blob/main/run_hmc.py) for HMC and [run_sgd.py](https://github.com/izmailovpavel/bnn_covariate_shift/blob/main/run_sgd.py) for SGD respectively.
-In the [notebooks folder](https://github.com/izmailovpavel/bnn_covariate_shift/tree/main/notebooks) we show examples of how to extract the covariance matrices for _EmpCov_ priors, and evaluate the results under various corruptions.
+are in the [`bnn_hmc` folder](https://github.com/izmailovpavel/bnn_covariate_shift/tree/main/bnn_hmc). 
+The main training scripts are [`run_hmc.py`](https://github.com/izmailovpavel/bnn_covariate_shift/blob/main/run_hmc.py) for HMC and [`run_sgd.py`](https://github.com/izmailovpavel/bnn_covariate_shift/blob/main/run_sgd.py) for SGD respectively.
+In the [`notebooks` folder](https://github.com/izmailovpavel/bnn_covariate_shift/tree/main/notebooks) we show examples of how to extract the covariance matrices for _EmpCov_ priors, and evaluate the results under various corruptions.
 
 ```
 .
@@ -149,7 +149,7 @@ Some prior types require additional arguments, such as `empcov_pca_wd` and
 
 ### Running HMC
 
-To run HMC, you can use the `run_hmc.py` training script. Arguments:
+To run HMC, you can use the [`run_hmc.py`](https://github.com/izmailovpavel/bnn_covariate_shift/blob/main/run_hmc.py) training script. Arguments:
 
 * `step_size` &mdash; HMC step size
 * `trajectory_len` &mdash; HMC trajectory length
@@ -246,7 +246,7 @@ This script can be ran on a single GPU or a TPU V3-8.
 
 ### Running SGD
 
-To run SGD, you can use the `run_sgd.py` training script. Arguments:
+To run SGD, you can use the [`run_sgd.py`](https://github.com/izmailovpavel/bnn_covariate_shift/blob/main/run_sgd.py) training script. Arguments:
 
 * `init_step_size` &mdash; Initial SGD step size; we use a cosine schedule
 * `num_epochs` &mdash; total number of SGD epochs iterations
