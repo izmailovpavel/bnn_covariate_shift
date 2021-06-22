@@ -127,8 +127,26 @@ determines the prior variance (`prior_var = 1 / weight_decay`)
 * `prior_family` &mdash; type of prior to use; must be one of `Gaussian`, 
   `ExpFNormP`, `Laplace`, `StudentT`, `SumFilterLeNet`, `EmpCovLeNet` or `EmpCovMLP`
 
-Some prior types require additional arguments, such as `empcov_pca_wd` and
-`studentt_degrees_of_freedom`; run scripts with `--help` for full details.
+### Prior Options
+
+The following priors are available as options for the `prior_family` argument:
+
+* `Gaussian` &mdash; the standard iid (isotropic) Gaussian distribution
+* `Laplace` &mdash; iid Laplace distribution
+* `StudentT` &mdash; iid Student's t-distribution; specify the degrees of
+  freedom using the `--studentt_degrees_of_freedom` option
+* `ExpFNormP` &mdash; the family of exponentiated Frobenius-norm priors as described
+  in Appendix A of the paper; the `--expfnormp_power` option sets the power
+  of the exponentiation
+* `SumFilterLeNet` &mdash; a combination of an iid Gaussian prior and a Laplace
+  prior on the sum of the weights in each filter of the first convolutional layer,
+  as outlined in Appendix I of the paper; option `--sumfilterlenet_weight_decay` sets
+  the weight decay for the Laplace term
+* `EmpCovLeNet` &mdash; the empirical covariance (EmpCov) prior for the LeNet 
+  architecture as defined in Section 6 of the paper; option `--empcov_invcov_ckpt`
+  sets the path for the saved matrix to be used as the inverse prior covariance,
+  and `--empcov_pca_wd` sets the weight decay for the first layer weights
+* `EmpCovMLP` &mdash; same as `EmpCovLeNet`, but for the MLP architecture
 
 ### Running HMC
 
