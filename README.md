@@ -144,7 +144,7 @@ To run HMC, you can use the `run_hmc.py` training script. Arguments:
 
 #### Examples
 
-CNN on CIFAR-10 using an EmpCov prior:
+CNN on CIFAR-10 with different priors:
 
 ```bash
 
@@ -164,7 +164,7 @@ python3 run_hmc.py --seed=0 --weight_decay=100 --temperature=1. \
 
 # Gaussian prior, T=0.1
 python3  run_hmc.py --seed=0 --weight_decay=3 --temperature=0.01 \
-  --dir=runs/hmc/cifar10/lenet/temp_ablation --dataset_name=cifar10 \
+  --dir=runs/hmc/cifar10/lenet/temp --dataset_name=cifar10 \
   --model_name=lenet --step_size=1.e-05 --trajectory_len=0.1 \
   --num_iterations=100 --max_num_leapfrog_steps=10000 \
   --num_burn_in_iterations=10
@@ -180,14 +180,49 @@ python3 run_hmc.py --seed=0 --weight_decay=100. --temperature=1. \
 ```
 We ran these commands on a machine with 8 NVIDIA Tesla V-100 GPUs.
 
-MLP on MNIST using a Student-T prior:
+MLP on MNIST using different priors:
 ```bash
-python3 run_hmc.py --seed=0 --weight_decay=10. --temperature=1. \
-  --dir=runs/hmc/mnist --dataset_name=mnist \
+
+# Gaussian prior
+python3 run_hmc.py --seed=2 --weight_decay=100  \
+  --dir=runs/hmc/mnist/gaussian \
+  --dataset_name=mnist --model_name=mlp_classification \
+  --step_size=1.e-05 --trajectory_len=0.15 \
+  --num_iterations=100 --max_num_leapfrog_steps=15500 \
+  --num_burn_in_iterations=10
+
+# Laplace prior
+python3 run_hmc.py --seed=0 --weight_decay=3.0 \
+  --dir=runs/hmc/mnist/laplace --dataset_name=mnist \
+  --model_name=mlp_classification --step_size=6.e-05 \
+  --trajectory_len=0.9 --num_iterations=100 \
+  --max_num_leapfrog_steps=15500 \
+  --num_burn_in_iterations=10 --prior_family=Laplace
+
+# Student-T prior
+python3 run_hmc.py --seed=0 --weight_decay=10. \
+  --dir=runs/hmc/mnist/studentt --dataset_name=mnist \
   --model_name=mlp_classification --step_size=1.e-4 --trajectory_len=0.49 \ 
   --num_iterations=100 --max_num_leapfrog_steps=5000 \
   --num_burn_in_iterations=10 --prior_family=StudentT \
   --studentt_degrees_of_freedom=5.
+
+# Gaussian prior, T=0.1
+python3 run_hmc.py --seed=11 --weight_decay=100 \
+  --temperature=0.01 --dir=runs/hmc/mnist/temp \
+  --dataset_name=mnist --model_name=mlp_classification \
+  --step_size=6.3e-07 --trajectory_len=0.015 \
+  --num_iterations=100 --max_num_leapfrog_steps=25500 \
+  --num_burn_in_iterations=10
+
+# EmpCov prior
+python3 run_hmc.py --seed=0 --weight_decay=100 \
+  --dir=runs/hmc/mnist/empcov --dataset_name=mnist \
+  --model_name=mlp_classification --step_size=1.e-05 \
+  --trajectory_len=0.15 --num_iterations=100 \
+  --max_num_leapfrog_steps=15500 \
+  --num_burn_in_iterations=10 --prior_family=EmpCovMLP \
+  --empcov_invcov_ckpt=mnist_mlp_pca_inv_cov_1e3.npy --empcov_pca_wd=100  
 ```
 This script can be ran on a single GPU or a TPU V3-8.
 
@@ -224,9 +259,10 @@ random seeds.
 
 ## Results
 
-Let us consider the corrupted versions of the MNIST and CIFAR-10 datasets with both fully-connected and convolutional neural architectures. Additionally, we consider domain shift problems from MNIST to SVHN and from CIFAR-10 to STL-10. We apply the _EmpCov_ prior to the first layer of Bayesian neural networks (BNNs), and a Gaussian prior to all other layers. The following figure shows the results for: deep ensembles, maximum-a-posterior estimate obtained through SGD, BNNs with a Gaussian prior (default choice in BNNs), and BNNs with our novel prior _EmpCov_. The figure demonstrates that _EmpCov_ prior improves the robustness of BNNs to covariate shift, leading to better results on most corruptions and a competitive performance with deep ensembles for both fully-connected and convolutional architectures. 
+We argue in our work that Bayesian neural networks perform poorly on out-of-distribution data when there are linear dependencies between features in the train data. Hence, we expect weights corresponding to these dependencies will only influence test but not train predictions. We show in our paper additionally that Bayesian posterior weights along low-variance principal components of the data are sampled from the prior, whereas they are set to zero by standard training procedures that are more robust to covariate shift. Inspired by these conclusions, we propose a novel prior, that we call  _EmpCov_ prior, on the weights of the first layer of the network to improve the robustness of Bayesian neural networks to covariate shift. 
 
 ![combined_resolution png-1](https://user-images.githubusercontent.com/14368801/122981650-fd517b80-d367-11eb-9876-52a26cbd0200.png)
+
 
 
 
