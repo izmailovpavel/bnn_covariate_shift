@@ -277,7 +277,7 @@ random seeds.
 
 ## Results
 
-We argue in our work that Bayesian neural networks perform poorly on out-of-distribution data when there are linear dependencies between features in the train data. Hence, we expect weights corresponding to these dependencies will only influence test but not train predictions. We show in our paper additionally that Bayesian posterior weights along low-variance principal components of the data are sampled from the prior, whereas they are set to zero by standard training procedures that are more robust to covariate shift. Inspired by these conclusions, we propose a novel prior, that we call  _EmpCov_ prior, on the weights of the first layer of the network to improve the robustness of Bayesian neural networks to covariate shift. 
+Let us consider the corrupted versions of the MNIST and CIFAR-10 datasets with both fully-connected and convolutional neural architectures. Additionally, we consider domain shift problems from MNIST to SVHN and from CIFAR-10 to STL-10. We apply the _EmpCov_ prior to the first layer of Bayesian neural networks (BNNs), and a Gaussian prior to all other layers. The following figure shows the results for: deep ensembles, maximum-a-posterior estimate obtained through SGD, BNNs with a Gaussian prior (default choice in BNNs), and BNNs with our novel prior _EmpCov_. The figure demonstrates that EmpCov prior improves the robustness of BNNs to covariate shift, leading to better results on most corruptions and a competitive performance with deep ensembles for both fully-connected and convolutional architectures. 
 
 ![combined_resolution png-1](https://user-images.githubusercontent.com/14368801/122981650-fd517b80-d367-11eb-9876-52a26cbd0200.png)
 
