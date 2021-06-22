@@ -55,6 +55,8 @@ instructions on how to install JAX on your hardware.
 
 ## File Structure
 
+ToDo
+
 ```
 .
 +-- core/
@@ -83,6 +85,8 @@ instructions on how to install JAX on your hardware.
 ```
 
 ## Training Scripts
+
+ToDo
 
 Common command line arguments:
 
@@ -120,31 +124,11 @@ To run HMC, you can use the `run_hmc.py` training script. Arguments:
 * `num_burn_in_iterations` &mdash; Number of burn-in iterations (default: `0`)
 
 #### Examples
-CNN-LSTM on IMDB: 
+
+ToDo
+
 ```bash
-# Temperature = 1
-python3 run_hmc.py --seed=1 --weight_decay=40. --temperature=1. \
-  --dir=runs/hmc/imdb/ --dataset_name=imdb --model_name=cnn_lstm \
-  --use_float64 --step_size=1e-5 --trajectory_len=0.24 \
-  --max_num_leapfrog_steps=30000
-
-# Temperature = 0.3
-python3 run_hmc.py --seed=1 --weight_decay=40. --temperature=0.3 \
-  --dir=runs/hmc/imdb/ --dataset_name=imdb --model_name=cnn_lstm \
-  --use_float64 --step_size=3e-6 --trajectory_len=0.136 \
-  --max_num_leapfrog_steps=46000
- 
-# Temperature = 0.1
-python3 run_hmc.py --seed=1 --weight_decay=40. --temperature=0.1 \
-  --dir=runs/hmc/imdb/ --dataset_name=imdb --model_name=cnn_lstm \
-  --use_float64 --step_size=1e-6 --trajectory_len=0.078 \
-  --max_num_leapfrog_steps=90000
-
-# Temperature = 0.03
-python3 run_hmc.py --seed=1 --weight_decay=40. --temperature=0.03  \
-  --dir=runs/hmc/imdb/ --dataset_name=imdb --model_name=cnn_lstm \
-  --use_float64 --step_size=1e-6 --trajectory_len=0.043 \
-  --max_num_leapfrog_steps=45000
+ToDo
 ```
 We ran these commands on a machine with 8 NVIDIA Tesla V-100 GPUs.
 
@@ -161,7 +145,7 @@ This script can be ran on a single GPU.
 **Note**: we run HMC on CIFAR-10 on TPU pod with 512 TPU devices with a
 modified version of the code that we will release soon.
 
-### Running SGD and Deep Ensembles
+### Running SGD
 
 To run SGD, you can use the `run_sgd.py` training script. Arguments:
 
@@ -174,155 +158,16 @@ To run SGD, you can use the `run_sgd.py` training script. Arguments:
 
 #### Examples
 
-ResNet-20-FRN on CIFAR-10:
+ToDo
 ```bash
-python3 run_sgd.py --seed=1 --weight_decay=10 --dir=runs/sgd/cifar10/ \
-  --dataset_name=cifar10 --model_name=resnet20_frn_swish \
-  --init_step_size=3e-7 --num_epochs=500 --eval_freq=10 --batch_size=80 \
-  --save_freq=500 --subset_train_to=40960
-```
-
-ResNet-20-FRN on CIFAR-100:
-```bash
-python3 run_sgd.py --seed=1 --weight_decay=10 --dir=runs/sgd/cifar100/ \
-  --dataset_name=cifar100 --model_name=resnet20_frn_swish \
-  --init_step_size=1e-6 --num_epochs=500 --eval_freq=10 --batch_size=80 \
-  --save_freq=500 --subset_train_to=40960
-```
-
-CNN-LSTM on IMDB:
-```bash
-python3 run_sgd.py --seed=1 --weight_decay=3. --dir=runs/sgd/imdb/ \
-  --dataset_name=imdb --model_name=cnn_lstm --init_step_size=3e-7 \
-  --num_epochs=500 --eval_freq=10 --batch_size=80 --save_freq=500
+ToDo
 ```
 
 To train a deep ensemble, we simply train multiple copies of SGD with different
 random seeds.
 
-### Running SGMCMC
+## Results
 
-To run SGMCMC variations, you can use the `run_sgmcmc.py` training script.
-It shares command line arguments with SGD, but also introduces the 
-following arguments:
+ToDo
 
-* `preconditioner` &mdash; choice of preconditioner (`None` or `RMSprop`; 
-  default: `None`)
-* `step_size_schedule` &mdash; choice step size schedule
-  (`constant` or `cyclical`); constant sets the step size to `final_step_size`
-  after a cosine burn-in for `num_burnin_epochs` epochs. `cyclical` uses a 
-  constant burn-in for `num_burnin_epochs` epochs and then a cosine cyclical 
-  schedule (default: `constant`)
-* `num_burnin_epochs` &mdash; number of epochs before final lr is reached
-* `final_step_size` &mdash; final step size (used only with constant schedule; 
-  default: `init_step_size`)
-* `step_size_cycle_length_epochs` &mdash; cycle length 
-  (epochs; used only with cyclic schedule; default: `50`)
-
-* `save_all_ensembled` &mdash; save all the networks that are ensembled
-* `ensemble_freq` &mdash; frequency of ensembling the iterates 
-  (epochs; default: `10`)
-
-#### Examples
-
-ResNet-20-FRN on CIFAR-10:
-
-```bash
-# SGLD
-python3 run_sgmcmc.py --seed=1 --weight_decay=5. --dir=runs/sgmcmc/cifar10/ \
-  --dataset_name=cifar10 --model_name=resnet20_frn_swish --init_step_size=1e-6 \
-  --final_step_size=1e-6 --num_epochs=10000 --num_burnin_epochs=1000 \
-  --eval_freq=10 --batch_size=80 --save_freq=10 --momentum=0. \
-  --subset_train_to=40960
-  
-# SGHMC
-python3 run_sgmcmc.py --seed=1 --weight_decay=5 --dir=runs/sgmcmc/cifar10/ \
-  --dataset_name=cifar10 --model_name=resnet20_frn_swish --init_step_size=3e-7 \
-  --final_step_size=3e-7 --num_epochs=10000 --num_burnin_epochs=1000 \
-  --eval_freq=10 --batch_size=80 --save_freq=10 --subset_train_to=40960 \
-  --momentum=0.9
-
-# SGHMC-CLR
-python3 run_sgmcmc.py --seed=1 --weight_decay=5 --dir=runs/sgmcmc/cifar10/ \
-  --dataset_name=cifar10 --model_name=resnet20_frn_swish --init_step_size=3e-7 \
-  --num_epochs=10000 --num_burnin_epochs=1000 --step_size_schedule=cyclical \
-  --step_size_cycle_length_epochs=50 --ensemble_freq=50 --eval_freq=10 \
-  --batch_size=80 --save_freq=1000 --subset_train_to=40960 \
-  --preconditioner=None --momentum=0.95 --eval_freq=10 --save_all_ensembled
-  
-# SGHMC-CLR-Prec
-python3 run_sgmcmc.py --seed=1 --weight_decay=5 --dir=runs/sghmc/cifar10/ \
-  --dataset_name=cifar10 --model_name=resnet20_frn_swish --init_step_size=3e-5 \
-  --num_epochs=10000 --num_burnin_epochs=1000 --step_size_schedule=cyclical \
-  --step_size_cycle_length_epochs=50 --ensemble_freq=50 --eval_freq=10 \
-  --batch_size=80 --save_freq=50 --subset_train_to=40960 \
-  --preconditioner=RMSprop --momentum=0.95 --eval_freq=10 --save_all_ensembled
-```
-
-### Running MFVI
-
-To run mean field variational inference (MFVI), you can use the `run_mfvi.py` 
-training script. It shares command line arguments with SGD, but also introduces 
-the following arguments:
-
-* `optimizer` &mdash; choice of optimizer (`SGD` or `Adam`; default: SGD)
-* `vi_sigma_init` &mdash; initial value of the standard deviation over the 
-  weights in MFVI (default: 1e-3)
-* `vi_ensemble_size` &mdash; size of the ensemble sampled in the VI evaluation 
-  (default: 20)
-* `mean_init_checkpoint` &mdash; SGD checkpoint to use for initialization of 
-  the mean of the MFVI approximation
-  
-#### Examples
-
-ResNet-20-FRN on CIFAR-10 or CIFAR-100:
-```bash
-python3 run_vi.py --seed=11 --weight_decay=5. --dir=runs/vi/cifar100/ \
-  --dataset_name=[cifar10 | cifar100] --model_name=resnet20_frn_swish \
-  --init_step_size=1e-4 --num_epochs=300 --eval_freq=10 --batch_size=80 \
-  --save_freq=300 --subset_train_to=40960 --optimizer=Adam \
-  --vi_sigma_init=0.01 --temperature=1. --vi_ensemble_size=20 \
-  --mean_init_checkpoint=<path-to-sgd-solution>
-```
-
-CNN-LSTM on IMDB:
-```bash
-python3 run_vi.py --seed=11 --weight_decay=5. --dir=runs/vi/imdb/ \
-  --dataset_name=imdb --model_name=cnn_lstm --init_step_size=1e-4 \
-  --num_epochs=500 --eval_freq=10 --batch_size=80 --save_freq=200 \
-  --optimizer=Adam --vi_sigma_init=0.01 --temperature=1. --vi_ensemble_size=20 \
-  --mean_init_checkpoint=<path-to-sgd-solution>
-```
-
-### Visualizing Posterior Density
-
-You can produce posterior density visualizations similar to the ones
-presented in the paper using the `makemake_posterior_surface_plot.py`
-script. Arguments:
-
-* `limit_bottom` &mdash; limit of the loss surface visualization along the 
-  vertical direction at the bottom (defaul: `-0.25`)
-* `limit_top` &mdash; limit of the loss surface visualization along the 
-  vertical direction at the top (defaul: `-0.25`)
-* `limit_left` &mdash; limit of the loss surface visualization along the 
-  horizontal direction on the left (defaul: `1.25`)
-* `limit_right` &mdash; limit of the loss surface visualization along the 
-  horizontal direction on the right (defaul: `1.25`)
-* `grid_size` &mdash; number of grid points in each direction (default: `20`)
-* `checkpoint1` &mdash; path to the first checkpoint
-* `checkpoint2` &mdash; path to the second checkpoint
-* `checkpoint3` &mdash; path to the third checkpoint
-
-The script visualizes the posterior log-density, log-likelihood and log-prior
-in the plane containing the three provided checkpoints. 
-
-### Example
-
-CNN-LSTM on IMDB:
-```bash
-python3 make_posterior_surface_plot.py --weight_decay=40 --temperature=1. \
-  --dir=runs/surface_plots/imdb/ --model_name=cnn_lstm --dataset_name=imdb \
-  --checkpoint1=<ckpt1> --checkpoint2=<ckpt2> --checkpoint3=<ckpt3> 
-  --limit_bottom=-0.75 --limit_left=-0.75 --limit_right=1.75 --limit_top=1.75 \
-  --grid_size=50
-```
+![combined_resolution png-1](https://user-images.githubusercontent.com/14368801/122981650-fd517b80-d367-11eb-9876-52a26cbd0200.png)
