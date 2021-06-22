@@ -106,7 +106,8 @@ In the [notebooks folder](https://github.com/izmailovpavel/bnn_covariate_shift/t
 
 ## Training Scripts
 
-ToDo
+The training scripts are adapted from the Google Research [BNN HMC repo](https://github.com/google-research/google-research/tree/master/bnn_hmc).
+For completeness, we provide full details about the command line arguments here.
 
 Common command line arguments:
 
@@ -128,7 +129,20 @@ determines the prior variance (`prior_var = 1 / weight_decay`)
 * `use_float64` &mdash; use float64 precision (does not work on TPUs and some
   GPUs); by default, we use `float32` precision
 * `prior_family` &mdash; type of prior to use; must be one of `Gaussian`, 
-  `ExpFNormP`, `Laplace`, `StudentT`, `SumFilterLeNet`, `EmpCovLeNet` or `EmpCovMLP`
+  `ExpFNormP`, `Laplace`, `StudentT`, `SumFilterLeNet`, `EmpCovLeNet` or `EmpCovMLP`;
+  see [the next section](https://github.com/izmailovpavel/bnn_covariate_shift#prior-families) for more details
+
+### Prior Families
+
+In this repo we implement several prior distribution families.
+Some of the prior families have additional command line arguments specifying the parameters of the prior:
+
+* `Gaussian` &mdash; iid Gaussian prior centered at `0` with variance equal to ` 1 / weight_decay`
+* `Laplace` &mdash; iid Laplace prior centered at `0` with variance equal to ` 1 / weight_decay`
+* `StudentT` &mdash; iid Laplace prior centered at `0` with `studentt_degrees_of_freedom` degrees of freedom and scaled by `1 / weight_decay`
+* `ExpFNormP` &mdash; iid ExpNorm prior centered at `0` defined in the paper. `expfnormp_power` specifies the power under the exponent in the prior, and `1 / weight_decay` defines the scale of the prior
+* `EmpCovLeNet` and `EmpCovMLP` &mdash; _EmpCov_ priors with the inverse of empirical covariance matrix of the data as a `.npy` array provided as `empcov_invcov_ckpt`; `empcov_wd` allows to rescale the covariance matrix for the first layer.
+* `SumFilterLeNet`  &mdash; _SumFilter_ prior presented in the paper; `1 / sumfilterlenet_weight_decay` determines the prior variance for the sum of the filter weights in the first layer
 
 Some prior types require additional arguments, such as `empcov_pca_wd` and
 `studentt_degrees_of_freedom`; run scripts with `--help` for full details.
@@ -179,7 +193,7 @@ python3 run_hmc.py --seed=0 --weight_decay=100. --temperature=1. \
   --num_iterations=100 --max_num_leapfrog_steps=2000 \
   --num_burn_in_iterations=10 --prior_family=EmpCovLeNet \
   --empcov_invcov_ckpt=empcov_covs/cifar_cnn_pca_inv_cov.npy \
-  --empcov_pca_wd=100.
+  --empcov_wd=100.
 ```
 We ran these commands on a machine with 8 NVIDIA Tesla V-100 GPUs.
 
@@ -226,7 +240,7 @@ python3 run_hmc.py --seed=0 --weight_decay=100 \
   --max_num_leapfrog_steps=15500 \
   --num_burn_in_iterations=10 --prior_family=EmpCovMLP \
   --empcov_invcov_ckpt=empcov_covs/mnist_mlp_pca_inv_cov.npy \
-  --empcov_pca_wd=100  
+  --empcov_wd=100  
 ```
 This script can be ran on a single GPU or a TPU V3-8.
 
@@ -263,7 +277,7 @@ random seeds.
 
 ## Results
 
-Let us consider the corrupted versions of the MNIST and CIFAR-10 datasets with both fully-connected and convolutional neural architectures. Additionally, we consider domain shift problems from MNIST to SVHN and from CIFAR-10 to STL-10. We apply the _EmpCov_ prior to the first layer of Bayesian neural networks (BNNs), and a Gaussian prior to all other layers. The following figure shows the results for: deep ensembles, maximum-a-posterior estimate obtained through SGD, BNNs with a Gaussian prior (default choice in BNNs), and BNNs with our novel prior _EmpCov_. The figure demonstrates that EmpCov prior improves the robustness of BNNs to covariate shift, leading to better results on most corruptions and a competitive performance with deep ensembles for both fully-connected and convolutional architectures.
+We argue in our work that Bayesian neural networks perform poorly on out-of-distribution data when there are linear dependencies between features in the train data. Hence, we expect weights corresponding to these dependencies will only influence test but not train predictions. We show in our paper additionally that Bayesian posterior weights along low-variance principal components of the data are sampled from the prior, whereas they are set to zero by standard training procedures that are more robust to covariate shift. Inspired by these conclusions, we propose a novel prior, that we call  _EmpCov_ prior, on the weights of the first layer of the network to improve the robustness of Bayesian neural networks to covariate shift. 
 
 ![combined_resolution png-1](https://user-images.githubusercontent.com/14368801/122981650-fd517b80-d367-11eb-9876-52a26cbd0200.png)
 
