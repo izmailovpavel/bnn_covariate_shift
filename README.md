@@ -64,29 +64,36 @@ ToDo
 
 ```
 .
-+-- core/
-|   +-- hmc.py (The Hamiltonian Monte Carlo algorithm)
-|   +-- sgmcmc.py (SGMCMC methods as optax optimizers)
-|   +-- vi.py (Mean field variational inference)
-+-- utils/ (Utility functions used by the training scripts)
-|   +-- train_utils.py (The training epochs and update rules)
-|   +-- models.py (Models used in the experiments)
-|   +-- losses.py (Prior and likelihood functions)
-|   +-- data_utils.py (Loading and pre-processing the data)
-|   +-- optim_utils.py (Optimizers and learning rate schedules)
-|   +-- ensemble_utils.py (Implementation of ensembling of predictions)
-|   +-- metrics.py (Metrics used in evaluation)
-|   +-- cmd_args_utils.py (Common command line arguments)
-|   +-- script_utils.py (Common functionality of the training scripts)
-|   +-- checkpoint_utils.py (Saving and loading checkpoints)
-|   +-- logging_utils.py (Utilities for logging printing the results)
-|   +-- precision_utils.py (Controlling the numerical precision)
-|   +-- tree_utils.py (Common operations on pytree objects)
++-- bnn_hmc/
+|   +-- core/
+|   |   +-- hmc.py (The Hamiltonian Monte Carlo algorithm)
+|   |   +-- sgmcmc.py (SGMCMC methods as optax optimizers)
+|   |   +-- vi.py (Mean field variational inference)
+|   +-- utils/ (Utility functions used by the training scripts)
+|   |   +-- train_utils.py (The training epochs and update rules)
+|   |   +-- models.py (Models used in the experiments)
+|   |   +-- losses.py (Prior and likelihood functions)
+|   |   +-- data_utils.py (Loading and pre-processing the data)
+|   |   +-- optim_utils.py (Optimizers and learning rate schedules)
+|   |   +-- ensemble_utils.py (Implementation of ensembling of predictions)
+|   |   +-- metrics.py (Metrics used in evaluation)
+|   |   +-- cmd_args_utils.py (Common command line arguments)
+|   |   +-- script_utils.py (Common functionality of the training scripts)
+|   |   +-- checkpoint_utils.py (Saving and loading checkpoints)
+|   |   +-- logging_utils.py (Utilities for logging printing the results)
+|   |   +-- precision_utils.py (Controlling the numerical precision)
+|   |   +-- tree_utils.py (Common operations on pytree objects)
++-- notebooks/  
+|   +-- cnn_robustness_cifar10.ipynb (Creates CIFAR-10 CNN figures used in paper)  
+|   +-- mlp_robustness_mnist.ipynb (Creates MNIST MLP figures used in paper)
+|   +-- cifar10_cnn_extract_empcov.ipynb (Constructs EmpCov prior covariance matrix for CIFAR-10 CNN)
+|   +-- mnist_extract_empcov.ipynb (Constructs EmpCov prior covariance matrices for CIFAR-10 CNN and MLP)
++-- pca_covs/
+|   +-- cifar_cnn_pca_inv_cov.npy (EmpCov inverse prior covariance for CIFAR-10 CNN)
+|   +-- mnist_cnn_pca_inv_cov.npy (EmpCov inverse prior covariance for MNIST CNN)
+|   +-- mnist_mlp_pca_inv_cov.npy (EmpCov inverse prior covariance for MNIST MLP)
 +-- run_hmc.py (HMC training script)
 +-- run_sgd.py (SGD training script)
-+-- run_sgmcmc.py (SGMCMC training script)
-+-- run_vi.py (MFVI training script)
-+-- make_posterior_surface_plot.py (script to visualize posterior density)
 ```
 
 ## Training Scripts
@@ -99,10 +106,7 @@ Common command line arguments:
 * `dir` &mdash; training directory for saving the checkpoints and 
 tensorboard logs
 * `dataset_name` &mdash; name of the dataset, e.g. `cifar10`, `cifar100`, 
-  `imdb`; 
-  for the UCI datasets, the name is specified as 
-  `<UCI dataset name>_<random seed>`, e.g. `yacht_2`, where the seed determines
-  the train-test split
+  `mnist`
 * `subset_train_to` &mdash; number of datapoints to use from the dataset;
   by default, the full dataset is used
 * `model_name` &mdash; name of the neural network architecture, e.g. `lenet`, 
@@ -115,6 +119,11 @@ determines the prior variance (`prior_var = 1 / weight_decay`)
 * `tabulate_freq` &mdash; frequency of tabulate table header logging
 * `use_float64` &mdash; use float64 precision (does not work on TPUs and some
   GPUs); by default, we use `float32` precision
+* `prior_family` &mdash; type of prior to use; must be one of `Gaussian`, 
+  `ExpFNormP`, `Laplace`, `StudentT`, `SumFilterLeNet`, `EmpCovLeNet` or `EmpCovMLP`
+
+Some prior types require additional arguments, such as `empcov_pca_wd` and
+`studentt_degrees_of_freedom`; run scripts with `--help` for full details.
 
 ### Running HMC
 
@@ -130,25 +139,29 @@ To run HMC, you can use the `run_hmc.py` training script. Arguments:
 
 #### Examples
 
-ToDo
+CNN on CIFAR-10 using an EmpCov prior:
 
 ```bash
-ToDo
+python3 run_hmc.py --seed=0 --weight_decay=100. --temperature=1. \
+  --dir=runs/hmc/cifar10 --dataset_name=cifar10 \
+  --model_name=lenet --step_size=1.e-4 --trajectory_len=0.157 \ 
+  --num_iterations=100 --max_num_leapfrog_steps=2000 \
+  --num_burn_in_iterations=10 --prior_family=EmpCovLeNet \
+  --empcov_invcov_ckpt=pca_cov/cifar_cnn_pca_inv_cov.npy \
+  --empcov_pca_wd=100.
 ```
 We ran these commands on a machine with 8 NVIDIA Tesla V-100 GPUs.
 
-MLP on a subset of 160 datapoints from MNIST:
+MLP on MNIST using a Student-T prior:
 ```bash
-python3 run_hmc.py --seed=0 --weight_decay=1. --temperature=1. \
-  --dir=runs/hmc/mnist_subset160 --dataset_name=mnist \
-  --model_name=mlp_classification --step_size=3.e-5 --trajectory_len=1.5 \ 
-  --num_iterations=100 --max_num_leapfrog_steps=50000 \
-  --num_burn_in_iterations=10 --subset_train_to=160
+python3 run_hmc.py --seed=0 --weight_decay=10. --temperature=1. \
+  --dir=runs/hmc/mnist --dataset_name=mnist \
+  --model_name=mlp_classification --step_size=1.e-4 --trajectory_len=0.49 \ 
+  --num_iterations=100 --max_num_leapfrog_steps=5000 \
+  --num_burn_in_iterations=10 --prior_family=StudentT \
+  --studentt_degrees_of_freedom=5.
 ```
 This script can be ran on a single GPU.
-
-**Note**: we run HMC on CIFAR-10 on TPU pod with 512 TPU devices with a
-modified version of the code that we will release soon.
 
 ### Running SGD
 
@@ -163,9 +176,12 @@ To run SGD, you can use the `run_sgd.py` training script. Arguments:
 
 #### Examples
 
-ToDo
+MLP on MNIST
 ```bash
-ToDo
+python3 run_sgd.py --seed=0 --weight_decay=100 --dir=runs/sgd/mnist/ \
+  --dataset_name=mnist --model_name=mlp_classification \
+  --init_step_size=1e-4 --num_epochs=300 --eval_freq=10 --batch_size=80 \
+  --save_freq=300
 ```
 
 To train a deep ensemble, we simply train multiple copies of SGD with different
