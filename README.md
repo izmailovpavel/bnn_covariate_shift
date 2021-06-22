@@ -31,8 +31,9 @@ The MAP solution weights are highly structured, while the BNN sample appears ext
 In particular the weights corresponding to \textit{dead pixels} (i.e. pixel positions that are black for all the MNIST images) near the boundary of the input image are set near zero (shown in white) by the MAP solution, but sampled randomly by the BNN.
 If at test time the data is corrupted, e.g. by Gaussian noise, and the pixels near the boundary of the image are activated,
 the MAP solution will ignore these pixels, while the predictions of the BNN will be significantly affected.  -->
-
-
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/14368801/122999444-49a6b680-d37c-11eb-81c0-9fe0a794ebdf.gif">
+</p>
 
 ## Requirements
 
