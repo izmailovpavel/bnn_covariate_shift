@@ -62,7 +62,7 @@ def add_common_flags(parser):
                       help="Path to the .npy checkpoint containing the inverse "
                            "of the covariance matrix "
                            "for the EmpCov family")
-  parser.add_argument("--empcov_pca_wd", type=float, default=None,
+  parser.add_argument("--empcov_wd", type=float, default=None,
                       help="Weight decay for the EmpCov term"
                            "for the EmpCov family")
 

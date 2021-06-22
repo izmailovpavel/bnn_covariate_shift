@@ -65,12 +65,12 @@ def get_prior(args):
       args.weight_decay, args.studentt_degrees_of_freedom, args.temperature)
   elif args.prior_family.lower() == "empcovlenet":
     cov = jnp.load(args.empcov_invcov_ckpt)
-    pca_wd = args.empcov_pca_wd
+    pca_wd = args.empcov_wd
     return losses.make_lenet_pca_log_prior(
       args.weight_decay, cov, pca_wd, args.temperature)
   elif args.prior_family.lower() == "empcovmlp":
     cov = jnp.load(args.empcov_invcov_ckpt)
-    pca_wd = args.empcov_pca_wd
+    pca_wd = args.empcov_wd
     return losses.make_mlp_pca_log_prior(
       args.weight_decay, cov, pca_wd, args.temperature)
   elif args.prior_family.lower() == "sumfilterlenet":
