@@ -1,54 +1,33 @@
 # Dangers of Bayesian Model Averaging under Covariate Shift
 
-The code is adapted from [this repo](https://github.com/google-research/google-research/tree/master/bnn_hmc).
-In addition to the original code, we implement several novel priors,
-which can be found in `utils/losses.py`, and dataloaders in `utils/data_utils.py`.
-Below, we provide the original Readme of the [this repo](https://github.com/google-research/google-research/tree/master/bnn_hmc).
-
-
-# What Are Bayesian Neural Network Posteriors Really Like?
-
 This repository contains the code to reproduce the experiments 
 in the paper
 
-[_What Are Bayesian Neural Network Posteriors Really Like?_](https://arxiv.org/abs/2104.14421)
+_Dangers of Bayesian Model Averaging under Covariate Shift_
 
-by Pavel Izmailov, Sharad Vikram, Matthew D. Hoffman and Andrew Gordon Wilson.
+by Pavel Izmailov, Patrick Nicholson, Sanae Lotfi and Andrew Gordon Wilson.
+
+The code is forked from the Google Research [BNN HMC repo](https://github.com/google-research/google-research/tree/master/bnn_hmc).
+
 
 
 ## Introduction
 
-In the paper, we use full-batch Hamiltonian Monte Carlo (HMC) to investigate 
-foundational questions in Bayesian deep learning.
-We show that
-- BNNs can achieve significant performance gains over standard training and 
-  deep ensembles; 
-- a single long HMC chain can provide a comparable representation of the 
-  posterior to multiple shorter chains; 
-- in contrast to recent studies, we find posterior tempering is not needed for 
-  near-optimal performance, with little evidence for a ``cold posterior'' 
-  effect, which we show is largely an artifact of data augmentation; 
-- BMA performance is robust to the choice of prior scale, and relatively similar
-  for diagonal Gaussian, mixture of Gaussian, and logistic priors;
-- Bayesian neural networks show surprisingly poor generalization under domain 
-  shift;
-- while cheaper alternatives such as deep ensembles and SGMCMC can provide good 
-  generalization, they provide distinct predictive 
-distributions from HMC. Notably, deep ensemble predictive distributions are 
-  similarly close to HMC as standard SGLD, and closer than standard variational
-  inference.
-  
-In this repository we provide JAX code for reproducing results in the paper.
-
-Please cite our work if you find it useful in your research:
-```bibtex
-@article{izmailov2021bayesian,
-  title={What Are Bayesian Neural Network Posteriors Really Like?},
-  author={Izmailov, Pavel and Vikram, Sharad and Hoffman, Matthew D and Wilson, Andrew Gordon},
-  journal={arXiv preprint arXiv:2104.14421},
-  year={2021}
-}
-```
+ToDo
+<p align="center">
+<table>
+  <tr>
+    <th><img src="https://user-images.githubusercontent.com/14368801/122979309-65529280-d365-11eb-97cc-a7106cb89c86.png" height=180></th>
+    <th><img src="https://user-images.githubusercontent.com/14368801/122979306-64b9fc00-d365-11eb-86e5-90637403bcdb.png" height=180></th>
+    <th><img src="https://user-images.githubusercontent.com/14368801/122979307-64b9fc00-d365-11eb-88d0-d9ef88a16c73.png" height=180></th>
+  </tr>
+  <tr>
+    <th>ResNet20, CIFAR-10</th>
+    <th>BNN weight sample</th>
+    <th>MAP solution</th>
+  </tr>
+</table>
+</p>
 
 ## Requirements
 
