@@ -22,7 +22,7 @@ In this work, we seek to understand, further demonstrate, and help remedy this c
 As an example, let us consider a fully-connected network on MNIST. 
 MNIST contains many dead pixels, i.e. pixels near the boundary that are zero for all training images. 
 The corresponding weights in the first layer of the network are always multiplied by zero, and have no effect on the likelihood of the training data. Consequently, in a Bayesian neural network, these weights will be sampled from the prior. 
-A MAP solution with on the other hand will set these parameters close to zero. 
+A MAP solution on the other hand will set these parameters close to zero. 
 In the animation, we visualize the weights in the first layer of a Bayesian neural network and a MAP solution.
 For each sample, we show the value of the weight corresponding to the highlighted pixel.
 
@@ -33,7 +33,7 @@ For each sample, we show the value of the weight corresponding to the highlighte
 If at test time the data is corrupted, e.g. by Gaussian noise, and the pixels near the boundary of the image are activated,
 the MAP solution will ignore these pixels, while the predictions of the BNN will be significantly affected.
 
-In the paper, we extend this reasoning to general linear dependencies between input features for both fully connected and convolutional Bayesian neural network.
+In the paper, we extend this reasoning to general linear dependencies between input features for both fully connected and convolutional Bayesian neural networks.
 We also propose _EmpCov_, a prior based on the empirical covariance of the data which significantly improves robustness of BNNs to covariate shift.
 We implement _EmpCov_ as well as other priors for Bayesian neural networks in this repo.
 
