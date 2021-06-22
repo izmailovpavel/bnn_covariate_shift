@@ -19,21 +19,25 @@ In this work, we seek to understand, further demonstrate, and help remedy this c
   <img src="https://user-images.githubusercontent.com/14368801/122991610-393e0e00-d373-11eb-80d9-50790da3d89c.png">
 </p>
 
-*TODO*
-<!-- Intuitively, we find that Bayesian model averaging (BMA) can be problematic under covariate shift as follows.
-Due to dependencies in the features of the train data distribution, model parameters corresponding to these dependencies do not affect the predictions on the train data. For example, parameters connected to dead pixels, i.e. pixels with intensity zero across all train images, do not affect predictions. 
-For these parameters, the posterior coincides with the prior.
-The MAP solution sets the values of these parameters to zero, due to regularization from the prior that penalizes the parameter norm, while the BMA samples these weights from the prior.
-At test time, the model is applied to a different data distribution, where the features do not have the same dependence, and the parameters that did not affect the predictions on train can negatively affect predictions on test. -->
+As an example, let us consider a fully-connected network on MNIST. 
+MNIST contains many dead pixels, i.e. pixels near the boundary that are zero for all training images. 
+The corresponding weights in the first layer of the network are always multiplied by zero, and have no effect on the likelihood of the training data. Consequently, in a Bayesian neural network, these weights will be sampled from the prior. 
+A MAP solution with on the other hand will set these parameters close to zero. 
+In the animation, we visualize the weights in the first layer of a Bayesian neural network and a MAP solution.
+For each sample, we show the value of the weight corresponding to the highlighted pixel.
 
-<!-- In \autoref{fig:intro_figure}(b, c) we visualize the weights in the first layer of a fully-connected network for a sample from the BNN posterior and the MAP solution on the MNIST dataset.
-The MAP solution weights are highly structured, while the BNN sample appears extremely noisy, similar to a draw from the Gaussian prior.
-In particular the weights corresponding to \textit{dead pixels} (i.e. pixel positions that are black for all the MNIST images) near the boundary of the input image are set near zero (shown in white) by the MAP solution, but sampled randomly by the BNN.
-If at test time the data is corrupted, e.g. by Gaussian noise, and the pixels near the boundary of the image are activated,
-the MAP solution will ignore these pixels, while the predictions of the BNN will be significantly affected.  -->
 <p align="center">
   <img src="https://user-images.githubusercontent.com/14368801/122999444-49a6b680-d37c-11eb-81c0-9fe0a794ebdf.gif">
 </p>
+
+If at test time the data is corrupted, e.g. by Gaussian noise, and the pixels near the boundary of the image are activated,
+the MAP solution will ignore these pixels, while the predictions of the BNN will be significantly affected.
+
+In the paper, we extend this reasoning to general linear dependencies between input features for both fully connected and convolutional Bayesian neural network.
+We also propose _EmpCov_, a prior based on the empirical covariance of the data which significantly improves robustness of BNNs to covariate shift.
+We implement _EmpCov_ as well as other priors for Bayesian neural networks in this repo.
+
+
 
 ## Requirements
 
