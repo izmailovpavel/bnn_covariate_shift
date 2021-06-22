@@ -222,7 +222,8 @@ python3 run_hmc.py --seed=0 --weight_decay=100 \
   --trajectory_len=0.15 --num_iterations=100 \
   --max_num_leapfrog_steps=15500 \
   --num_burn_in_iterations=10 --prior_family=EmpCovMLP \
-  --empcov_invcov_ckpt=mnist_mlp_pca_inv_cov_1e3.npy --empcov_pca_wd=100  
+  --empcov_invcov_ckpt=mnist_mlp_pca_inv_cov_1e3.npy \
+  --empcov_pca_wd=100  
 ```
 This script can be ran on a single GPU or a TPU V3-8.
 
