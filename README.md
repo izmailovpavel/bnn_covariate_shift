@@ -147,8 +147,31 @@ To run HMC, you can use the `run_hmc.py` training script. Arguments:
 CNN on CIFAR-10 using an EmpCov prior:
 
 ```bash
+
+# Gaussian prior
+python3 run_hmc.py --seed=0 --weight_decay=100 --temperature=1. \
+  --dir=runs/hmc/cifar10/gaussian/ --dataset_name=cifar10 \
+  --model_name=lenet --step_size=3.e-05 --trajectory_len=0.15 \
+  --num_iterations=100 --max_num_leapfrog_steps=5300 \
+  --num_burn_in_iterations=10
+
+# Laplace prior
+python3 run_hmc.py --seed=0 --weight_decay=100 --temperature=1. \
+  --dir=runs/hmc/cifar10/laplace --dataset_name=cifar10 \
+  --model_name=lenet --step_size=3.e-05 --trajectory_len=0.15 \
+  --num_iterations=100 --max_num_leapfrog_steps=5300 \
+  --num_burn_in_iterations=10 --prior_family=Laplace
+
+# Gaussian prior, T=0.1
+python3  run_hmc.py --seed=0 --weight_decay=3 --temperature=0.01 \
+  --dir=runs/hmc/cifar10/lenet/temp_ablation --dataset_name=cifar10 \
+  --model_name=lenet --step_size=1.e-05 --trajectory_len=0.1 \
+  --num_iterations=100 --max_num_leapfrog_steps=10000 \
+  --num_burn_in_iterations=10
+
+# EmpCov prior
 python3 run_hmc.py --seed=0 --weight_decay=100. --temperature=1. \
-  --dir=runs/hmc/cifar10 --dataset_name=cifar10 \
+  --dir=runs/hmc/cifar10/EmpCov --dataset_name=cifar10 \
   --model_name=lenet --step_size=1.e-4 --trajectory_len=0.157 \ 
   --num_iterations=100 --max_num_leapfrog_steps=2000 \
   --num_burn_in_iterations=10 --prior_family=EmpCovLeNet \
@@ -166,7 +189,7 @@ python3 run_hmc.py --seed=0 --weight_decay=10. --temperature=1. \
   --num_burn_in_iterations=10 --prior_family=StudentT \
   --studentt_degrees_of_freedom=5.
 ```
-This script can be ran on a single GPU.
+This script can be ran on a single GPU or a TPU V3-8.
 
 ### Running SGD
 
@@ -181,7 +204,7 @@ To run SGD, you can use the `run_sgd.py` training script. Arguments:
 
 #### Examples
 
-MLP on MNIST
+MLP on MNIST:
 ```bash
 python3 run_sgd.py --seed=0 --weight_decay=100 --dir=runs/sgd/mnist/ \
   --dataset_name=mnist --model_name=mlp_classification \
@@ -189,7 +212,7 @@ python3 run_sgd.py --seed=0 --weight_decay=100 --dir=runs/sgd/mnist/ \
   --num_epochs=100 --save_freq=100
 ```
 
-CNN on CIFAR-10
+CNN on CIFAR-10:
 ```bash
 python3 run_sgd.py --seed=0 --weight_decay=100. --dir=runs/sgd/cifar10/lenet \
   --dataset_name=cifar10 --model_name=lenet --init_step_size=1e-7 --batch_size=80 \
