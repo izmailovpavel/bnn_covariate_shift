@@ -149,30 +149,6 @@ def make_exp_fnorm_p_log_prior(weight_decay, power, temperature):
   return log_prior, log_prior_diff
 
 
-def make_diag_gaussian_log_prior(cov_diag_tree, temperature):
-  """Returns the Gaussian log-density and delta given weight decay."""
-  n_params = sum([p.size for p in jax.tree_leaves(cov_diag_tree)])
-  cov_logdet = sum(jax.tree_leaves(jax.tree_map(
-      lambda s: jnp.log(s).sum(), cov_diag_tree)))
-  norm_constant = -0.5 * (n_params * jnp.log(2 * math.pi) + cov_logdet)
-
-  def log_prior(params):
-    """Computes the Gaussian prior log-density."""
-    quadratic_term = sum(jax.tree_leaves(jax.tree_multimap(
-      lambda p, s: -(p**2 / (2 * s)).sum(), params, cov_diag_tree)))
-    log_prob = quadratic_term + norm_constant
-    return log_prob / temperature
-
-  def log_prior_diff(params1, params2):
-    """Computes the delta in  Gaussian prior log-density."""
-    diff = sum(jax.tree_leaves(jax.tree_multimap(
-        lambda p1, p2, s: -((p1**2 - p2**2) / (2 * s)).sum(),
-        params1, params2, cov_diag_tree)))
-    return diff / temperature
-
-  return log_prior, log_prior_diff
-
-
 def make_lenet_conv_correlated_log_prior(weight_decay, inv_sigma, temperature):
   """Returns the block-correlated log-density and delta given weight decay."""
 

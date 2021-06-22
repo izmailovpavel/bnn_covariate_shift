@@ -46,8 +46,7 @@ def add_common_flags(parser):
   # Prior
   parser.add_argument("--prior_family", type=str, default="Gaussian",
                       choices=["Gaussian", "ExpFNormP", "Laplace", "StudentT",
-                               "DiagGaussian", "LenetConvCorrelated",
-                               "LeNetSumFilter", "LeNetPCA", "MLPPCA"],
+                               "SumFilterLeNet", "EmpCovLeNet", "EmpCovMLP"],
                       help="Prior distribution family")
   parser.add_argument("--weight_decay", type=float, default=15.,
                       help="Weight decay, equivalent to setting prior std")
@@ -55,30 +54,17 @@ def add_common_flags(parser):
                       help="Degrees of freedom in StudentT family")
   parser.add_argument("--expfnormp_power", type=float, default=2.,
                       help="Power of the F-norm in ExpFNormp family")
-  parser.add_argument("--diaggaussian_cov_ckpt", type=str, default=None,
-                      help="Path to the checkpoint containing the diagonal of"
-                           "the covariance matrix for DiagGaussian family")
-  parser.add_argument("--diaggaussian_cov_scale", type=float, default=1.,
-                      help="Scaling factor for the covariance matrix for "
-                           "DiagGaussian family")
-  # parser.add_argument("--lenetconvcorrelated_cov_ckpt", type=str, default=None,
-  #                     help="Path to the .npy checkpoint containing the inverse "
-  #                          "of the covariance matrix of the first LeNet5 Layer "
-  #                          "for the LenetConvCorrelated family")
-  parser.add_argument("--lenetconvcorrelated_invcov_scale", type=float,
-                      default=1.,
-                      help="Inv cov scale for the LenetConvCorrelated family")
-  parser.add_argument("--lenetsumfilter_weight_decay", type=float, default=15.,
+  parser.add_argument("--sumfilterlenet_weight_decay", type=float, default=15.,
                       help="Weight decay for the Laplace prior over the sum of"
                            "the filter weights in the first layer of LeNet5"
-                           "for the LeNetSumFilter prior family")
-  parser.add_argument("--lenetpca_invcov_ckpt", type=str, default=None,
+                           "for the SumFilterLeNet prior family")
+  parser.add_argument("--empcov_invcov_ckpt", type=str, default=None,
                       help="Path to the .npy checkpoint containing the inverse "
-                           "of the covariance matrix of the first LeNet5 Layer "
-                           "for the LeNetPCA family")
-  parser.add_argument("--lenetpca_pca_wd", type=float, default=None,
-                      help="Weight decay for the PCA term"
-                           "for the LeNetPCA family")
+                           "of the covariance matrix "
+                           "for the EmpCov family")
+  parser.add_argument("--empcov_pca_wd", type=float, default=None,
+                      help="Weight decay for the EmpCov term"
+                           "for the EmpCov family")
 
 def add_sgd_flags(parser):
 

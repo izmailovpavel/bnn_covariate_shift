@@ -63,29 +63,19 @@ def get_prior(args):
   elif args.prior_family.lower() == "studentt":
     return losses.make_student_t_log_prior(
       args.weight_decay, args.studentt_degrees_of_freedom, args.temperature)
-  elif args.prior_family.lower() == "diaggaussian":
-    cov = checkpoint_utils.load_checkpoint(args.diaggaussian_cov_ckpt)
-    cov_scale = args.diaggaussian_cov_scale
-    cov = jax.tree_map(lambda s: s * cov_scale, cov)
-  # elif args.prior_family.lower() == "lenetconvcorrelated":
-  #   cov = jnp.load(args.lenetconvcorrelated_cov_ckpt)
-  #   cov_scale = args.lenetconvcorrelated_invcov_scale
-  #   return losses.make_lenet_conv_correlated_log_prior(
-  #     args.weight_decay, cov * cov_scale, args.temperature)
-  elif args.prior_family.lower() == "lenetpca":
-    cov = jnp.load(args.lenetpca_invcov_ckpt)
-    pca_wd = args.lenetpca_pca_wd
+  elif args.prior_family.lower() == "empcovlenet":
+    cov = jnp.load(args.empcov_invcov_ckpt)
+    pca_wd = args.empcov_pca_wd
     return losses.make_lenet_pca_log_prior(
       args.weight_decay, cov, pca_wd, args.temperature)
-  elif args.prior_family.lower() == "mlppca":
-    cov = jnp.load(args.lenetpca_invcov_ckpt)
-    print(cov)
-    pca_wd = args.lenetpca_pca_wd
+  elif args.prior_family.lower() == "empcovmlp":
+    cov = jnp.load(args.empcov_invcov_ckpt)
+    pca_wd = args.empcov_pca_wd
     return losses.make_mlp_pca_log_prior(
       args.weight_decay, cov, pca_wd, args.temperature)
-  elif args.prior_family.lower() == "lenetsumfilter":
+  elif args.prior_family.lower() == "sumfilterlenet":
     return losses.make_lenet_sumfilter_log_prior(
-      args.weight_decay, args.lenetsumfilter_weight_decay, args.temperature)
+      args.weight_decay, args.sumfilterlenet_weight_decay, args.temperature)
   else:
     raise ValueError("Unknown prior: {}".format(args.prior_family))
 
