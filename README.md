@@ -65,7 +65,10 @@ instructions on how to install JAX on your hardware.
 
 ## File Structure
 
-ToDo
+The implementations of HMC and other methods forked from [BNN HMC repo](https://github.com/google-research/google-research/tree/master/bnn_hmc)
+are in the [bnn_hmc folder](https://github.com/izmailovpavel/bnn_covariate_shift/tree/main/bnn_hmc). 
+The main training scripts are [run_hmc.py](https://github.com/izmailovpavel/bnn_covariate_shift/blob/main/run_hmc.py) for HMC and [run_sgd.py](https://github.com/izmailovpavel/bnn_covariate_shift/blob/main/run_sgd.py) respectively.
+In the [notebooks foolder](https://github.com/izmailovpavel/bnn_covariate_shift/tree/main/notebooks) we show examples of how to extract the covariance matrices for _EmpCov_ priors, and evaluate the results under various corruptions.
 
 ```
 .
@@ -175,7 +178,7 @@ python3 run_hmc.py --seed=0 --weight_decay=100. --temperature=1. \
   --model_name=lenet --step_size=1.e-4 --trajectory_len=0.157 \ 
   --num_iterations=100 --max_num_leapfrog_steps=2000 \
   --num_burn_in_iterations=10 --prior_family=EmpCovLeNet \
-  --empcov_invcov_ckpt=pca_cov/cifar_cnn_pca_inv_cov.npy \
+  --empcov_invcov_ckpt=empcov_covs/cifar_cnn_pca_inv_cov.npy \
   --empcov_pca_wd=100.
 ```
 We ran these commands on a machine with 8 NVIDIA Tesla V-100 GPUs.
@@ -222,7 +225,7 @@ python3 run_hmc.py --seed=0 --weight_decay=100 \
   --trajectory_len=0.15 --num_iterations=100 \
   --max_num_leapfrog_steps=15500 \
   --num_burn_in_iterations=10 --prior_family=EmpCovMLP \
-  --empcov_invcov_ckpt=mnist_mlp_pca_inv_cov_1e3.npy \
+  --empcov_invcov_ckpt=empcov_covs/mnist_mlp_pca_inv_cov.npy \
   --empcov_pca_wd=100  
 ```
 This script can be ran on a single GPU or a TPU V3-8.
