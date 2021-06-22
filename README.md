@@ -1,3 +1,11 @@
+# Dangers of Bayesian Model Averaging under Covariate Shift
+
+The code is adapted from [this repo](https://github.com/google-research/google-research/tree/master/bnn_hmc).
+In addition to the original code, we implement several novel priors,
+which can be found in `utils/losses.py`, and dataloaders in `utils/data_utils.py`.
+Below, we provide the original Readme of the [this repo](https://github.com/google-research/google-research/tree/master/bnn_hmc).
+
+
 # What Are Bayesian Neural Network Posteriors Really Like?
 
 This repository contains the code to reproduce the experiments 
