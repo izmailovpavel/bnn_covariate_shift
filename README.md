@@ -65,10 +65,10 @@ instructions on how to install JAX on your hardware.
 
 ## File Structure
 
-The implementations of HMC and other methods forked from [BNN HMC repo](https://github.com/google-research/google-research/tree/master/bnn_hmc)
+The implementations of HMC and other methods forked from the [BNN HMC repo](https://github.com/google-research/google-research/tree/master/bnn_hmc)
 are in the [bnn_hmc folder](https://github.com/izmailovpavel/bnn_covariate_shift/tree/main/bnn_hmc). 
-The main training scripts are [run_hmc.py](https://github.com/izmailovpavel/bnn_covariate_shift/blob/main/run_hmc.py) for HMC and [run_sgd.py](https://github.com/izmailovpavel/bnn_covariate_shift/blob/main/run_sgd.py) respectively.
-In the [notebooks foolder](https://github.com/izmailovpavel/bnn_covariate_shift/tree/main/notebooks) we show examples of how to extract the covariance matrices for _EmpCov_ priors, and evaluate the results under various corruptions.
+The main training scripts are [run_hmc.py](https://github.com/izmailovpavel/bnn_covariate_shift/blob/main/run_hmc.py) for HMC and [run_sgd.py](https://github.com/izmailovpavel/bnn_covariate_shift/blob/main/run_sgd.py) for SGD respectively.
+In the [notebooks folder](https://github.com/izmailovpavel/bnn_covariate_shift/tree/main/notebooks) we show examples of how to extract the covariance matrices for _EmpCov_ priors, and evaluate the results under various corruptions.
 
 ```
 .
@@ -96,7 +96,7 @@ In the [notebooks foolder](https://github.com/izmailovpavel/bnn_covariate_shift/
 |   +-- mlp_robustness_mnist.ipynb (Creates MNIST MLP figures used in paper)
 |   +-- cifar10_cnn_extract_empcov.ipynb (Constructs EmpCov prior covariance matrix for CIFAR-10 CNN)
 |   +-- mnist_extract_empcov.ipynb (Constructs EmpCov prior covariance matrices for CIFAR-10 CNN and MLP)
-+-- pca_covs/
++-- empcov_covs/
 |   +-- cifar_cnn_pca_inv_cov.npy (EmpCov inverse prior covariance for CIFAR-10 CNN)
 |   +-- mnist_cnn_pca_inv_cov.npy (EmpCov inverse prior covariance for MNIST CNN)
 |   +-- mnist_mlp_pca_inv_cov.npy (EmpCov inverse prior covariance for MNIST MLP)
