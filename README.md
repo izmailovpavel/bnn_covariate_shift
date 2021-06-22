@@ -2,18 +2,19 @@
 
 This repository contains the code to reproduce the experiments 
 in the paper
-
 _Dangers of Bayesian Model Averaging under Covariate Shift_
-
 by Pavel Izmailov, Patrick Nicholson, Sanae Lotfi and Andrew Gordon Wilson.
 
 The code is forked from the Google Research [BNN HMC repo](https://github.com/google-research/google-research/tree/master/bnn_hmc).
 
-
-
 ## Introduction
 
-ToDo
+Approximate Bayesian inference for neural networks is considered a robust alternative to standard training, often providing good performance on out-of-distribution data.
+However, it was recently [shown](https://arxiv.org/abs/2104.14421) that Bayesian neural networks (BNNs) with high fidelity inference through Hamiltonian Monte Carlo (HMC) provide shockingly poor performance under covariate shift.
+For example, in the left panel of the figure below we see that a ResNet-20 BNN approximated with HMC underperforms a maximum a-posteriori (MAP) solution by $25\%$ on the _pixelate_-corrupted CIFAR-10 test set. 
+This result is particularly surprising given that on the in-distribution test data, the BNN outperforms the MAP solution by over 5%.
+In this work, we seek to understand, further demonstrate, and help remedy this concerning behaviour. 
+
 <p align="center">
 <table>
   <tr>
@@ -28,6 +29,21 @@ ToDo
   </tr>
 </table>
 </p>
+<!--
+Intuitively, we find that Bayesian model averaging (BMA) can be problematic under covariate shift as follows.
+Due to dependencies in the features of the train data distribution, model parameters corresponding to these dependencies do not affect the predictions on the train data. For example, parameters connected to dead pixels, i.e. pixels with intensity zero across all train images, do not affect predictions. 
+For these parameters, the posterior coincides with the prior.
+The MAP solution sets the values of these parameters to zero, due to regularization from the prior that penalizes the parameter norm, while the BMA samples these weights from the prior.
+At test time, the model is applied to a different data distribution, where the features do not have the same dependence, and the parameters that did not affect the predictions on train can negatively affect predictions on test.
+
+In \autoref{fig:intro_figure}(b, c) we visualize the weights in the first layer of a fully-connected network for a sample from the BNN posterior and the MAP solution on the MNIST dataset.
+The MAP solution weights are highly structured, while the BNN sample appears extremely noisy, similar to a draw from the Gaussian prior.
+In particular the weights corresponding to \textit{dead pixels} (i.e. pixel positions that are black for all the MNIST images) near the boundary of the input image are set near zero (shown in white) by the MAP solution, but sampled randomly by the BNN.
+If at test time the data is corrupted, e.g. by Gaussian noise, and the pixels near the boundary of the image are activated,
+the MAP solution will ignore these pixels, while the predictions of the BNN will be significantly affected. 
+-->
+
+
 
 ## Requirements
 
