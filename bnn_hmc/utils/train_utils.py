@@ -168,7 +168,7 @@ def make_hmc_update(
       pmap_update_, params=params, log_likelihood=log_likelihood,
       state_grad=state_grad, key=key, step_size=step_size,
       n_leapfrog_steps=n_leapfrog_steps, do_mh_correction=do_mh_correction)
-    return jax.pmap(fn)(dataset=dataset, net_state=net_state)
+    return jax.pmap(fn, axis_name='i')(dataset=dataset, net_state=net_state)
   
   def update(
       dataset, params, net_state, log_likelihood, state_grad, key, step_size,
