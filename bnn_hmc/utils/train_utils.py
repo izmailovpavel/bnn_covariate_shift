@@ -168,8 +168,7 @@ def make_hmc_update(
       pmap_update_, params=params, log_likelihood=log_likelihood,
       state_grad=state_grad, key=key, step_size=step_size,
       n_leapfrog_steps=n_leapfrog_steps, do_mh_correction=do_mh_correction)
-
-    return jax.pmap(fn)(dataset, net_state)
+    return jax.pmap(fn)(dataset=dataset, net_state=net_state)
   
   def update(
       dataset, params, net_state, log_likelihood, state_grad, key, step_size,
@@ -281,7 +280,7 @@ def make_get_predictions(activation_fn, num_batches=1, is_training=False):
 
   def pmap_get_predictions(net_apply, params, net_state, dataset):
     fn = functools.partial(get_predictions, net_apply=net_apply, params=params)
-    return jax.pmap(fn, axis_name='i')(net_state, dataset)
+    return jax.pmap(fn, axis_name='i')(net_state=net_state, dataset=dataset)
   return pmap_get_predictions
 
 
