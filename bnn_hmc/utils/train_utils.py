@@ -144,23 +144,32 @@ def make_hmc_update(
   hmc_update = hmc.make_adaptive_hmc_update(
     _perdevice_log_prob_and_grad, log_prior_diff_fn)
 
-  @functools.partial(
-    jax.pmap, axis_name='i', static_broadcasted_argnums=[3, 5, 6, 7, 8],
-    in_axes=(0, None, 0, None, None, None, None, None, None)
-  )
-  def pmap_update(
-      dataset, params, net_state, log_likelihood, state_grad, key, step_size,
-      n_leapfrog_steps, do_mh_correction
+  def pmap_update_(
+          dataset, params, net_state, log_likelihood, state_grad, key,
+          step_size,
+          n_leapfrog_steps, do_mh_correction
   ):
     (params, net_state, log_likelihood, state_grad, step_size, accept_prob,
      accepted) = hmc_update(
-        dataset, params, net_state, log_likelihood, state_grad, key, step_size,
-        n_leapfrog_steps, target_accept_rate=target_accept_rate,
-        step_size_adaptation_speed=step_size_adaptation_speed,
-        do_mh_correction=do_mh_correction)
+      dataset, params, net_state, log_likelihood, state_grad, key, step_size,
+      n_leapfrog_steps, target_accept_rate=target_accept_rate,
+      step_size_adaptation_speed=step_size_adaptation_speed,
+      do_mh_correction=do_mh_correction)
     key, = jax.random.split(key, 1)
     return (params, net_state, log_likelihood, state_grad, step_size, key,
             accept_prob, accepted)
+
+  def pmap_update(
+          dataset, params, net_state, log_likelihood, state_grad, key,
+          step_size,
+          n_leapfrog_steps, do_mh_correction
+  ):
+    fn = functools.partial(
+      pmap_update_, params=params, log_likelihood=log_likelihood,
+      state_grad=state_grad, key=key, step_size=step_size,
+      n_leapfrog_steps=n_leapfrog_steps, do_mh_correction=do_mh_correction)
+
+    return jax.pmap(fn)(dataset, net_state)
   
   def update(
       dataset, params, net_state, log_likelihood, state_grad, key, step_size,
@@ -252,10 +261,6 @@ def make_sgd_train_epoch(
 
 
 def make_get_predictions(activation_fn, num_batches=1, is_training=False):
-  @functools.partial(
-    jax.pmap, axis_name='i', static_broadcasted_argnums=[0],
-    in_axes=(None, None, 0, 0,)
-  )
   def get_predictions(
       net_apply, params, net_state, dataset
   ):
@@ -273,7 +278,11 @@ def make_get_predictions(activation_fn, num_batches=1, is_training=False):
     predictions = predictions.reshape((
         num_batches * batch_size, *predictions.shape[2:]))
     return net_state, predictions
-  return get_predictions
+
+  def pmap_get_predictions(net_apply, params, net_state, dataset):
+    fn = functools.partial(get_predictions, net_apply=net_apply, params=params)
+    return jax.pmap(fn, axis_name='i')(net_state, dataset)
+  return pmap_get_predictions
 
 
 get_softmax_predictions = make_get_predictions(jax.nn.softmax)
