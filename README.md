@@ -281,6 +281,11 @@ We consider the corrupted versions of the MNIST and CIFAR-10 datasets with both 
 
 ![combined_resolution png-1](https://user-images.githubusercontent.com/14368801/122981650-fd517b80-d367-11eb-9876-52a26cbd0200.png)
 
+## Available Samples
 
+We make HMC samples publicly available:
+- MNIST CNN: https://storage.googleapis.com/bnn_covariate_shift/mnist_cnn_runs.tar.gz
+- MNIST MLP: https://storage.googleapis.com/bnn_covariate_shift/mnist_mlp_runs.tar.gz
+- CIFAR ResNet (colab with instructions): https://colab.research.google.com/drive/1EAWv7KwVPh_bw3hvJOfCNappQTQgGsh7?usp=sharing.
 
 
