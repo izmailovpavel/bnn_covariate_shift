@@ -288,4 +288,9 @@ We make HMC samples publicly available:
 - MNIST MLP: https://storage.googleapis.com/bnn_covariate_shift/mnist_mlp_runs.tar.gz
 - CIFAR ResNet (colab with instructions): https://colab.research.google.com/drive/1EAWv7KwVPh_bw3hvJOfCNappQTQgGsh7?usp=sharing.
 
+Alternative (google drive):
+
+- MLP checkpoints: https://drive.google.com/file/d/1vztHk9eA2AcJ9ZcPmWIJq9e1x6K_yAda/view?usp=sharing
+- CNN checkpoints: https://drive.google.com/file/d/15FTYKdyjSPx95BLai5shs6SB_Fu9TM6u/view?usp=sharing
+
 
