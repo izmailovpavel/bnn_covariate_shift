@@ -106,7 +106,7 @@ def _make_perdevice_minibatch_log_prob_and_grad(
       likelihood_grad = jax.lax.psum(likelihood_grad, axis_name='i')
     
       log_prob = likelihood * num_batches + prior
-      grad = jax.tree_multimap(
+      grad = jax.tree_util.tree_map(
         lambda gl, gp: gl * num_batches + gp, likelihood_grad, prior_grad)
       return log_prob, grad, net_state
   return perdevice_log_prob_and_grad
@@ -144,12 +144,12 @@ def make_hmc_update(
   hmc_update = hmc.make_adaptive_hmc_update(
     _perdevice_log_prob_and_grad, log_prior_diff_fn)
 
-  @functools.partial(
-    jax.pmap, axis_name='i', static_broadcasted_argnums=[3, 5, 6, 7, 8],
-    in_axes=(0, None, 0, None, None, None, None, None, None)
-  )
+  # @functools.partial(
+  #   jax.pmap, axis_name='i',
+  #   in_axes=(0, None, 0, None, None, None, None, None, None)
+  # )
   def pmap_update(
-      dataset, params, net_state, log_likelihood, state_grad, key, step_size,
+      dataset, params, net_state, state_grad, log_likelihood, key, step_size,
       n_leapfrog_steps, do_mh_correction
   ):
     (params, net_state, log_likelihood, state_grad, step_size, accept_prob,
@@ -172,10 +172,14 @@ def make_hmc_update(
       "higher than max_n_leapfrog {}".format(n_leapfrog, max_num_leapfrog_steps)
     )
     
+    pmap_update_  = jax.pmap(
+      functools.partial(pmap_update,
+        log_likelihood=log_likelihood, key=key, step_size=step_size,
+        n_leapfrog_steps=n_leapfrog, do_mh_correction=do_mh_correction),
+      axis_name='i', in_axes=(0, None, 0, None))
     (params, net_state, log_likelihood, state_grad, step_size, key,
-     accept_prob, accepted) = pmap_update(
-        dataset, params, net_state, log_likelihood, state_grad, key, step_size,
-        n_leapfrog, do_mh_correction)
+      accept_prob, accepted) = pmap_update_(
+            dataset, params, net_state, state_grad)
     params, state_grad = map(
         tree_utils.get_first_elem_in_sharded_tree, [params, state_grad])
     log_likelihood, step_size, key, accept_prob, accepted = map(

@@ -24,21 +24,21 @@ def tree_get_types(tree):
 
 
 def tree_add(a, b):
-  return jax.tree_multimap(lambda e1, e2: e1+e2, a, b)
+  return jax.tree_util.tree_map(lambda e1, e2: e1+e2, a, b)
 
 
 def tree_diff(a, b):
-  return jax.tree_multimap(lambda p_a, p_b: p_a - p_b, a, b)
+  return jax.tree_util.tree_map(lambda p_a, p_b: p_a - p_b, a, b)
 
 
 def tree_dot(a, b):
   return sum([jnp.sum(e1 * e2) for e1, e2 in
-              zip(jax.tree_leaves(a), jax.tree_leaves(b))])
+              zip(jax.tree_util.tree_leaves(a), jax.tree_util.tree_leaves(b))])
 
 
 def tree_dist(a, b):
   dist_sq = sum([jnp.sum((e1 - e2)**2) for e1, e2 in
-                 zip(jax.tree_leaves(a), jax.tree_leaves(b))])
+                 zip(jax.tree_util.tree_leaves(a), jax.tree_util.tree_leaves(b))])
   return jnp.sqrt(dist_sq)
 
 
@@ -51,14 +51,14 @@ def get_first_elem_in_sharded_tree(tree):
 
 
 def tree_norm(a):
-  return float(jnp.sqrt(sum([jnp.sum(p_a ** 2) for p_a in jax.tree_leaves(a)])))
+  return float(jnp.sqrt(sum([jnp.sum(p_a ** 2) for p_a in jax.tree_util.tree_leaves(a)])))
 
 
 def normal_like_tree(a, key):
-  treedef = jax.tree_structure(a)
-  num_vars = len(jax.tree_leaves(a))
+  treedef = jax.tree_util.tree_structure(a)
+  num_vars = len(jax.tree_util.tree_leaves(a))
   all_keys = jax.random.split(key, num=(num_vars + 1))
-  noise = jax.tree_multimap(
+  noise = jax.tree_util.tree_map(
       lambda p, k: jax.random.normal(k, shape=p.shape),
-      a, jax.tree_unflatten(treedef, all_keys[1:]))
+      a, jax.tree_util.tree_unflatten(treedef, all_keys[1:]))
   return noise, all_keys[0]
